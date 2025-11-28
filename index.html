@@ -9,27 +9,37 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
+        html, body {
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+        }
+
+        body {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             font-family: 'Press Start 2P', cursive;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            min-height: 100dvh; /* Dynamic viewport height for mobile */
             color: white;
         }
 
         #game-container {
             position: relative;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            background: #000;
+            overflow: hidden;
+        }
+
+        /* Fullscreen mode */
+        #game-container:fullscreen,
+        #game-container:-webkit-full-screen {
             width: 100%;
             height: 100%;
-            max-width: 1280px;
-            max-height: 720px;
-            background: #000;
-            box-shadow: 0 0 60px rgba(255, 100, 50, 0.3), 0 0 100px rgba(0, 0, 0, 0.8);
-            border-radius: 8px;
-            overflow: hidden;
         }
 
         canvas {
@@ -42,15 +52,15 @@
 
         #ui {
             position: absolute;
-            top: 15px;
-            left: 20px;
+            top: 2vh;
+            left: 2vw;
             text-shadow: 3px 3px 0 #000, -1px -1px 0 #000;
             z-index: 10;
             pointer-events: none;
-            font-size: 14px;
+            font-size: clamp(8px, 1.5vw, 14px);
         }
 
-        #ui > div { margin-bottom: 8px; }
+        #ui > div { margin-bottom: clamp(4px, 1vh, 8px); }
         #ui .label { color: #ffd700; }
         #ui .value { color: #fff; }
 
@@ -69,12 +79,14 @@
             align-items: center;
             z-index: 20;
             transition: opacity 0.5s;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         .hidden { opacity: 0; pointer-events: none; }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: clamp(1.2rem, 5vw, 2.5rem);
             color: #ff6b6b;
             margin-bottom: 10px;
             text-align: center;
@@ -88,32 +100,33 @@
         }
 
         .subtitle {
-            font-size: 1rem;
+            font-size: clamp(0.6rem, 2vw, 1rem);
             color: #ffd700;
-            margin-bottom: 30px;
+            margin-bottom: clamp(15px, 4vh, 30px);
             text-shadow: 2px 2px 0 #000;
         }
 
         p {
-            font-size: 0.8rem;
+            font-size: clamp(0.5rem, 1.5vw, 0.8rem);
             line-height: 2;
             text-align: center;
             color: #aaa;
-            margin-bottom: 30px;
+            margin-bottom: clamp(15px, 4vh, 30px);
         }
 
         button {
             background: linear-gradient(to bottom, #e74c3c, #c0392b);
             border: 4px solid #fff;
             color: white;
-            padding: 18px 40px;
-            font-size: 1rem;
+            padding: clamp(12px, 2vh, 18px) clamp(20px, 4vw, 40px);
+            font-size: clamp(0.6rem, 1.8vw, 1rem);
             font-family: inherit;
             cursor: pointer;
             text-transform: uppercase;
             box-shadow: 0 6px 0 #922b21, 0 8px 15px rgba(0,0,0,0.5);
             transition: all 0.1s;
             border-radius: 8px;
+            touch-action: manipulation;
         }
 
         button:hover {
@@ -128,16 +141,17 @@
         }
 
         .key-guide {
-            margin-top: 25px;
-            font-size: 0.65rem;
+            margin-top: clamp(15px, 3vh, 25px);
+            font-size: clamp(0.4rem, 1.2vw, 0.65rem);
             color: #666;
             line-height: 2.2;
+            text-align: center;
         }
 
         .key {
             display: inline-block;
             border: 2px solid #555;
-            padding: 4px 10px;
+            padding: clamp(2px, 0.5vh, 4px) clamp(5px, 1vw, 10px);
             border-radius: 6px;
             background: linear-gradient(to bottom, #444, #222);
             color: #fff;
@@ -156,7 +170,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 2rem;
+            font-size: clamp(1.2rem, 4vw, 2rem);
             color: #ffd700;
             text-shadow: 4px 4px 0 #000;
             z-index: 15;
@@ -167,10 +181,10 @@
 
         #boss-health-container {
             position: absolute;
-            top: 60px;
+            top: clamp(40px, 8vh, 60px);
             left: 50%;
             transform: translateX(-50%);
-            width: 300px;
+            width: clamp(150px, 40vw, 300px);
             z-index: 10;
             opacity: 0;
             transition: opacity 0.3s;
@@ -181,14 +195,14 @@
         .boss-name {
             text-align: center;
             color: #ff6b6b;
-            font-size: 0.8rem;
+            font-size: clamp(0.5rem, 1.2vw, 0.8rem);
             margin-bottom: 5px;
             text-shadow: 2px 2px 0 #000;
         }
 
         #boss-health-bar {
             width: 100%;
-            height: 20px;
+            height: clamp(12px, 2.5vh, 20px);
             background: #333;
             border: 3px solid #fff;
             border-radius: 10px;
@@ -200,6 +214,84 @@
             height: 100%;
             background: linear-gradient(to bottom, #ff6b6b, #c0392b);
             transition: width 0.3s;
+        }
+
+        /* Mobile touch controls */
+        #touch-controls {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30vh;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .touch-btn {
+            position: absolute;
+            width: clamp(50px, 12vw, 70px);
+            height: clamp(50px, 12vw, 70px);
+            background: rgba(255,255,255,0.2);
+            border: 3px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(16px, 4vw, 24px);
+            color: rgba(255,255,255,0.8);
+            pointer-events: auto;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .touch-btn:active {
+            background: rgba(255,255,255,0.4);
+        }
+
+        #touch-left { left: 2vw; bottom: 10vh; }
+        #touch-right { left: calc(2vw + clamp(60px, 14vw, 80px)); bottom: 10vh; }
+        #touch-jump { right: 2vw; bottom: 15vh; }
+        #touch-run { right: calc(2vw + clamp(60px, 14vw, 80px)); bottom: 8vh; }
+
+        /* Show touch controls on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            #touch-controls {
+                display: block;
+            }
+            
+            .key-guide {
+                display: none;
+            }
+            
+            #ui {
+                font-size: clamp(6px, 2.5vw, 12px);
+            }
+        }
+
+        /* Landscape mobile optimization */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            #overlay {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: clamp(1rem, 4vh, 1.5rem);
+                margin-bottom: 5px;
+            }
+            
+            .subtitle {
+                margin-bottom: 10px;
+            }
+            
+            p {
+                margin-bottom: 10px;
+            }
+            
+            .key-guide {
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
@@ -223,6 +315,14 @@
         <div id="boss-health-bar">
             <div id="boss-health-fill"></div>
         </div>
+    </div>
+
+    <!-- Touch controls for mobile -->
+    <div id="touch-controls">
+        <div id="touch-left" class="touch-btn">◀</div>
+        <div id="touch-right" class="touch-btn">▶</div>
+        <div id="touch-jump" class="touch-btn">▲</div>
+        <div id="touch-run" class="touch-btn">🏃</div>
     </div>
 
     <div id="overlay">
@@ -258,6 +358,7 @@ const descText = document.getElementById('desc-text');
 const levelIndicator = document.getElementById('level-indicator');
 const bossHealthContainer = document.getElementById('boss-health-container');
 const bossHealthFill = document.getElementById('boss-health-fill');
+const gameContainer = document.getElementById('game-container');
 
 // ゲーム定数
 const TILE_SIZE = 48;
@@ -430,6 +531,57 @@ class InputHandler {
         };
         window.addEventListener('keydown', (e) => this.handleKey(e, true));
         window.addEventListener('keyup', (e) => this.handleKey(e, false));
+        
+        // タッチコントロールの設定
+        this.setupTouchControls();
+    }
+
+    setupTouchControls() {
+        const touchLeft = document.getElementById('touch-left');
+        const touchRight = document.getElementById('touch-right');
+        const touchJump = document.getElementById('touch-jump');
+        const touchRun = document.getElementById('touch-run');
+        
+        // 左ボタン
+        touchLeft.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.keys.left = true;
+        });
+        touchLeft.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.left = false;
+        });
+        
+        // 右ボタン
+        touchRight.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.keys.right = true;
+        });
+        touchRight.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.right = false;
+        });
+        
+        // ジャンプボタン
+        touchJump.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!this.keys.jump) this.keys.jumpPressed = true;
+            this.keys.jump = true;
+        });
+        touchJump.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.jump = false;
+        });
+        
+        // ダッシュボタン
+        touchRun.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.keys.run = true;
+        });
+        touchRun.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.run = false;
+        });
     }
 
     handleKey(e, state) {
@@ -2272,8 +2424,101 @@ class Game {
         if (theme === 'overworld') {
             this.drawClouds();
             this.drawHills();
+        } else if (theme === 'underground') {
+            this.drawSewerBackground();
         } else if (theme === 'castle') {
             this.drawCastleBackground();
+        }
+    }
+
+    drawSewerBackground() {
+        // 下水道の壁のレンガ模様
+        const brickWidth = 60;
+        const brickHeight = 30;
+        const offsetX = (this.camera.x * 0.2) % brickWidth;
+        
+        for (let row = 0; row < Math.ceil(canvas.height / brickHeight) + 1; row++) {
+            const isOddRow = row % 2 === 1;
+            const rowOffset = isOddRow ? brickWidth / 2 : 0;
+            
+            for (let col = -1; col < Math.ceil(canvas.width / brickWidth) + 2; col++) {
+                const x = col * brickWidth - offsetX + rowOffset;
+                const y = row * brickHeight;
+                
+                // レンガの色（暗めの青緑系）
+                const shade = 0.9 + Math.sin(col * 0.5 + row * 0.3) * 0.1;
+                ctx.fillStyle = `rgb(${Math.floor(25 * shade)}, ${Math.floor(45 * shade)}, ${Math.floor(55 * shade)})`;
+                ctx.fillRect(x + 1, y + 1, brickWidth - 2, brickHeight - 2);
+                
+                // レンガの目地（暗い線）
+                ctx.strokeStyle = '#0a1a20';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, brickWidth, brickHeight);
+            }
+        }
+        
+        // 汚れ・苔の表現
+        ctx.fillStyle = 'rgba(20, 60, 40, 0.3)';
+        for (let i = 0; i < 15; i++) {
+            const mx = ((i * 173) % canvas.width + this.camera.x * 0.1) % (canvas.width + 200) - 100;
+            const my = (i * 97) % canvas.height;
+            const size = 20 + (i * 13) % 40;
+            ctx.beginPath();
+            ctx.arc(mx, my, size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // 天井のパイプ
+        ctx.fillStyle = '#2a4a5a';
+        ctx.fillRect(0, 30, canvas.width, 20);
+        ctx.fillStyle = '#1a3a4a';
+        ctx.fillRect(0, 35, canvas.width, 10);
+        
+        // パイプの継ぎ目
+        for (let px = 0; px < canvas.width; px += 150) {
+            const pipeX = (px - this.camera.x * 0.3) % (canvas.width + 150);
+            ctx.fillStyle = '#3a5a6a';
+            ctx.fillRect(pipeX, 25, 30, 30);
+            ctx.fillStyle = '#2a4a5a';
+            ctx.fillRect(pipeX + 5, 28, 20, 24);
+        }
+        
+        // 下水の流れ（画面下部）
+        const sewerY = canvas.height - 60;
+        
+        // 下水の水面
+        ctx.fillStyle = '#1a3a2a';
+        ctx.fillRect(0, sewerY, canvas.width, 60);
+        
+        // 水面の波紋と流れ
+        ctx.fillStyle = '#2a5a4a';
+        for (let wx = 0; wx < canvas.width + 50; wx += 50) {
+            const waveX = (wx - this.frame * 2 - this.camera.x * 0.5) % (canvas.width + 100) - 50;
+            const waveY = sewerY + Math.sin(this.frame * 0.1 + wx * 0.05) * 3;
+            ctx.beginPath();
+            ctx.ellipse(waveX, waveY, 25, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // 泡
+        ctx.fillStyle = 'rgba(100, 150, 120, 0.5)';
+        for (let b = 0; b < 8; b++) {
+            const bx = ((b * 137 + this.frame * 0.5) % canvas.width);
+            const by = sewerY + 10 + Math.sin(this.frame * 0.15 + b) * 8;
+            const bSize = 3 + Math.sin(this.frame * 0.2 + b * 2) * 2;
+            ctx.beginPath();
+            ctx.arc(bx, by, bSize, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // 滴り落ちる水滴
+        ctx.fillStyle = '#4a8a7a';
+        for (let d = 0; d < 5; d++) {
+            const dropX = (d * 200 + 50 - this.camera.x * 0.2) % canvas.width;
+            const dropY = (this.frame * 2 + d * 60) % (sewerY - 50) + 50;
+            ctx.beginPath();
+            ctx.ellipse(dropX, dropY, 3, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
         }
     }
 
@@ -2294,23 +2539,55 @@ class Game {
     }
 
     drawHills() {
+        // 地面の高さを計算（マップの下から約6タイル分が地面エリア）
+        const groundLevel = canvas.height - (this.currentMap.height - 7) * TILE_SIZE + this.camera.y;
+        const hillBaseY = Math.min(groundLevel, canvas.height * 0.65);
+        
+        // 遠景の山（大きい山）
         ctx.fillStyle = '#228B22';
         const hillPositions = [0, 400, 900, 1500, 2200];
         hillPositions.forEach(hx => {
             const x = (hx - this.camera.x * 0.5) % (canvas.width + 600) - 200;
             ctx.beginPath();
-            ctx.moveTo(x - 100, canvas.height);
-            ctx.quadraticCurveTo(x, canvas.height - 120, x + 100, canvas.height);
+            ctx.moveTo(x - 100, hillBaseY);
+            ctx.quadraticCurveTo(x, hillBaseY - 120, x + 100, hillBaseY);
             ctx.fill();
         });
+        
+        // 手前の山（小さい山）
         ctx.fillStyle = '#32CD32';
         hillPositions.forEach(hx => {
             const x = (hx + 200 - this.camera.x * 0.5) % (canvas.width + 600) - 200;
             ctx.beginPath();
-            ctx.moveTo(x - 60, canvas.height);
-            ctx.quadraticCurveTo(x, canvas.height - 70, x + 60, canvas.height);
+            ctx.moveTo(x - 60, hillBaseY);
+            ctx.quadraticCurveTo(x, hillBaseY - 70, x + 60, hillBaseY);
             ctx.fill();
         });
+        
+        // 地面エリアをブロック模様で描画（他の足場と同じ）
+        const groundFillY = hillBaseY;
+        if (groundFillY < canvas.height) {
+            const theme = this.currentMap?.theme || 'overworld';
+            let color1, color2, borderColor;
+            if (theme === 'overworld') { color1 = '#c84c0c'; color2 = '#e09050'; borderColor = '#5c3c28'; }
+            else if (theme === 'underground') { color1 = '#1c5a7d'; color2 = '#2d7ab0'; borderColor = '#0d3a52'; }
+            else { color1 = '#4a4a4a'; color2 = '#6a6a6a'; borderColor = '#2a2a2a'; }
+            
+            // ブロック模様を繰り返し描画
+            const startX = -((this.camera.x % TILE_SIZE) + TILE_SIZE) % TILE_SIZE;
+            for (let gx = startX; gx < canvas.width; gx += TILE_SIZE) {
+                for (let gy = groundFillY; gy < canvas.height; gy += TILE_SIZE) {
+                    ctx.fillStyle = color1;
+                    ctx.fillRect(gx, gy, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = color2;
+                    ctx.fillRect(gx + 2, gy + 2, TILE_SIZE - 4, TILE_SIZE / 2 - 2);
+                    ctx.fillRect(gx + TILE_SIZE / 2, gy + TILE_SIZE / 2, TILE_SIZE / 2 - 2, TILE_SIZE / 2 - 2);
+                    ctx.strokeStyle = borderColor;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(gx + 1, gy + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+                }
+            }
+        }
     }
 
     drawCastleBackground() {
