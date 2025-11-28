@@ -254,6 +254,8 @@
         #touch-right { left: calc(2vw + clamp(60px, 14vw, 80px)); bottom: 10vh; }
         #touch-jump { right: 2vw; bottom: 15vh; }
         #touch-run { right: calc(2vw + clamp(60px, 14vw, 80px)); bottom: 8vh; }
+        #touch-fire { right: calc(2vw + clamp(60px, 14vw, 80px)); bottom: calc(8vh + clamp(60px, 14vw, 80px) + 2vh); }
+        #touch-fire.hidden { display: none; }
 
         /* Show touch controls on touch devices */
         @media (hover: none) and (pointer: coarse) {
@@ -323,6 +325,7 @@
         <div id="touch-right" class="touch-btn">▶</div>
         <div id="touch-jump" class="touch-btn">▲</div>
         <div id="touch-run" class="touch-btn">🏃</div>
+        <div id="touch-fire" class="touch-btn hidden">🔥</div>
     </div>
 
     <div id="overlay">
@@ -582,6 +585,28 @@ class InputHandler {
             e.preventDefault();
             this.keys.run = false;
         });
+        
+        // ファイアボタン
+        const touchFire = document.getElementById('touch-fire');
+        touchFire.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!this.keys.fire) this.keys.firePressed = true;
+            this.keys.fire = true;
+        });
+        touchFire.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.fire = false;
+        });
+    }
+    
+    // ファイアボタンの表示/非表示を更新
+    updateFireButton(hasFirePower) {
+        const touchFire = document.getElementById('touch-fire');
+        if (hasFirePower) {
+            touchFire.classList.remove('hidden');
+        } else {
+            touchFire.classList.add('hidden');
+        }
     }
 
     handleKey(e, state) {
@@ -2226,6 +2251,9 @@ class Game {
         
         this.player.update(this.input);
         this.input.update();
+        
+        // タッチ操作のファイアボタン表示更新
+        this.input.updateFireButton(this.player.hasFirePower);
         
         const targetCamX = this.player.x - canvas.width / 2 + this.player.width / 2;
         this.camera.x += (targetCamX - this.camera.x) * 0.08;
