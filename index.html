@@ -2539,57 +2539,8 @@ class Game {
     }
 
     drawHills() {
-        // 地面の高さを計算（マップの下から約6タイル分が地面エリア）
-        const groundLevel = canvas.height - (this.currentMap.height - 7) * TILE_SIZE + this.camera.y;
-        const hillBaseY = Math.min(groundLevel, canvas.height * 0.65);
-        
-        // 遠景の山（大きい山）
-        ctx.fillStyle = '#228B22';
-        const hillPositions = [0, 400, 900, 1500, 2200];
-        hillPositions.forEach(hx => {
-            const x = (hx - this.camera.x * 0.5) % (canvas.width + 600) - 200;
-            ctx.beginPath();
-            ctx.moveTo(x - 100, hillBaseY);
-            ctx.quadraticCurveTo(x, hillBaseY - 120, x + 100, hillBaseY);
-            ctx.fill();
-        });
-        
-        // 手前の山（小さい山）
-        ctx.fillStyle = '#32CD32';
-        hillPositions.forEach(hx => {
-            const x = (hx + 200 - this.camera.x * 0.5) % (canvas.width + 600) - 200;
-            ctx.beginPath();
-            ctx.moveTo(x - 60, hillBaseY);
-            ctx.quadraticCurveTo(x, hillBaseY - 70, x + 60, hillBaseY);
-            ctx.fill();
-        });
-        
-        // 地面エリアをブロック模様で描画（他の足場と同じ）
-        // 4ブロック分下げて開始
-        const groundFillY = hillBaseY + TILE_SIZE * 4;
-        if (groundFillY < canvas.height + TILE_SIZE * 10) {
-            const theme = this.currentMap?.theme || 'overworld';
-            let color1, color2, borderColor;
-            if (theme === 'overworld') { color1 = '#c84c0c'; color2 = '#e09050'; borderColor = '#5c3c28'; }
-            else if (theme === 'underground') { color1 = '#1c5a7d'; color2 = '#2d7ab0'; borderColor = '#0d3a52'; }
-            else { color1 = '#4a4a4a'; color2 = '#6a6a6a'; borderColor = '#2a2a2a'; }
-            
-            // ブロック模様を繰り返し描画（下は無限に伸ばす）
-            const startX = -((this.camera.x % TILE_SIZE) + TILE_SIZE) % TILE_SIZE;
-            const endY = canvas.height + TILE_SIZE * 10; // 画面外まで伸ばす
-            for (let gx = startX; gx < canvas.width; gx += TILE_SIZE) {
-                for (let gy = groundFillY; gy < endY; gy += TILE_SIZE) {
-                    ctx.fillStyle = color1;
-                    ctx.fillRect(gx, gy, TILE_SIZE, TILE_SIZE);
-                    ctx.fillStyle = color2;
-                    ctx.fillRect(gx + 2, gy + 2, TILE_SIZE - 4, TILE_SIZE / 2 - 2);
-                    ctx.fillRect(gx + TILE_SIZE / 2, gy + TILE_SIZE / 2, TILE_SIZE / 2 - 2, TILE_SIZE / 2 - 2);
-                    ctx.strokeStyle = borderColor;
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(gx + 1, gy + 1, TILE_SIZE - 2, TILE_SIZE - 2);
-                }
-            }
-        }
+        // 青空と雲だけ（山と地面ブロックなし）
+        // 雲はdrawCloudsで描画されるため、ここでは何もしない
     }
 
     drawCastleBackground() {
