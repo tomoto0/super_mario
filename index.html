@@ -2565,18 +2565,20 @@ class Game {
         });
         
         // 地面エリアをブロック模様で描画（他の足場と同じ）
-        const groundFillY = hillBaseY;
-        if (groundFillY < canvas.height) {
+        // 4ブロック分下げて開始
+        const groundFillY = hillBaseY + TILE_SIZE * 4;
+        if (groundFillY < canvas.height + TILE_SIZE * 10) {
             const theme = this.currentMap?.theme || 'overworld';
             let color1, color2, borderColor;
             if (theme === 'overworld') { color1 = '#c84c0c'; color2 = '#e09050'; borderColor = '#5c3c28'; }
             else if (theme === 'underground') { color1 = '#1c5a7d'; color2 = '#2d7ab0'; borderColor = '#0d3a52'; }
             else { color1 = '#4a4a4a'; color2 = '#6a6a6a'; borderColor = '#2a2a2a'; }
             
-            // ブロック模様を繰り返し描画
+            // ブロック模様を繰り返し描画（下は無限に伸ばす）
             const startX = -((this.camera.x % TILE_SIZE) + TILE_SIZE) % TILE_SIZE;
+            const endY = canvas.height + TILE_SIZE * 10; // 画面外まで伸ばす
             for (let gx = startX; gx < canvas.width; gx += TILE_SIZE) {
-                for (let gy = groundFillY; gy < canvas.height; gy += TILE_SIZE) {
+                for (let gy = groundFillY; gy < endY; gy += TILE_SIZE) {
                     ctx.fillStyle = color1;
                     ctx.fillRect(gx, gy, TILE_SIZE, TILE_SIZE);
                     ctx.fillStyle = color2;
